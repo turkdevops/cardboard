@@ -24,7 +24,6 @@
 #endif
 #include "distortion_renderer.h"
 #include "include/cardboard.h"
-#include "screen_params.h"
 #include "util/is_initialized.h"
 #include "util/logging.h"
 
@@ -132,8 +131,7 @@ GLuint CreateProgram(const char* vertex, const char* fragment) {
 
 }  // namespace
 
-namespace cardboard {
-namespace rendering {
+namespace cardboard::rendering {
 
 // @brief OpenGL ES 2.0 concrete implementation of DistortionRenderer.
 class OpenGlEs2DistortionRenderer : public DistortionRenderer {
@@ -202,7 +200,7 @@ class OpenGlEs2DistortionRenderer : public DistortionRenderer {
    *   - glGet(GL_ELEMENT_ARRAY_BUFFER_BINDING)
    */
   void RenderEyeToDisplay(
-      int target_display, int x, int y, int width, int height,
+      uint64_t target, int x, int y, int width, int height,
       const CardboardEyeTextureDescription* left_eye,
       const CardboardEyeTextureDescription* right_eye) const override {
     if (elements_count_[0] == 0 || elements_count_[1] == 0) {
@@ -213,7 +211,7 @@ class OpenGlEs2DistortionRenderer : public DistortionRenderer {
     }
 
     glViewport(x, y, width, height);
-    glBindFramebuffer(GL_FRAMEBUFFER, target_display);
+    glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>(target));
     glDisable(GL_SCISSOR_TEST);
     glDisable(GL_CULL_FACE);
     glClearColor(.0f, .0f, .0f, 1.0f);
@@ -274,7 +272,7 @@ class OpenGlEs2DistortionRenderer : public DistortionRenderer {
     glEnableVertexAttribArray(attrib_tex_);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, eye_description->texture);
+    glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(eye_description->texture));
 
     glUniform2f(uniform_start_, eye_description->left_u,
                 eye_description->bottom_v);
@@ -298,8 +296,7 @@ class OpenGlEs2DistortionRenderer : public DistortionRenderer {
   GLuint uniform_end_;
 };
 
-}  // namespace rendering
-}  // namespace cardboard
+}  // namespace cardboard::rendering
 
 extern "C" {
 

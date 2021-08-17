@@ -18,8 +18,7 @@
 #include <cmath>
 #include <utility>
 
-namespace cardboard {
-namespace unity {
+namespace cardboard::unity {
 namespace {
 
 // TODO(b/151817737): Compute pose position within SDK with custom rotation.
@@ -145,9 +144,9 @@ UnityXRPose CardboardTransformToUnityPose(
   ret.rotation.y = -ret.rotation.y;
 
   // Inverse + negate Z.
-  ret.position.x = -transform[3];
-  ret.position.y = -transform[7];
-  ret.position.z = transform[11];
+  ret.position.x = -transform[12];
+  ret.position.y = -transform[13];
+  ret.position.z = transform[14];
 
   // In order to find the inverse transform we need to apply the rotation.
   ret.position = QuatMulVec(ret.rotation, ret.position);
@@ -155,5 +154,4 @@ UnityXRPose CardboardTransformToUnityPose(
   return ret;
 }
 
-}  // namespace unity
-}  // namespace cardboard
+}  // namespace cardboard::unity

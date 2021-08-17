@@ -18,9 +18,9 @@
 #include <array>
 #include <cmath>
 
-#include "unity/xr_unity_plugin/cardboard_xr_unity.h"
 #include "unity/xr_provider/load.h"
 #include "unity/xr_provider/math_tools.h"
+#include "unity/xr_unity_plugin/cardboard_xr_unity.h"
 #include "IUnityInterface.h"
 #include "IUnityXRInput.h"
 #include "IUnityXRTrace.h"
@@ -35,7 +35,7 @@ class CardboardInputProvider {
  public:
   CardboardInputProvider(IUnityXRTrace* trace, IUnityXRInputInterface* input)
       : trace_(trace), input_(input) {
-    cardboard_api_.reset(new cardboard::unity::CardboardApi());
+    cardboard_api_.reset(new cardboard::unity::CardboardApi(kClassName));
   }
 
   IUnityXRInputInterface* GetInput() { return input_; }
@@ -48,7 +48,8 @@ class CardboardInputProvider {
 
   /// Callback executed when a subsystem should initialize in preparation for
   /// becoming active.
-  UnitySubsystemErrorCode Initialize(UnitySubsystemHandle handle, void* data) {
+  UnitySubsystemErrorCode Initialize(UnitySubsystemHandle handle,
+                                     void* /*data*/) {
     CARDBOARD_INPUT_XR_TRACE_LOG(cardboard_input_provider_->GetTrace(),
                                  "Lifecycle initialized");
 
@@ -190,6 +191,9 @@ class CardboardInputProvider {
   }
 
  private:
+  /// TODO(b/191992787): Erase when Cardboard API refactor is done.
+  const char* kClassName = "CardboardInputProvider";
+
   static constexpr int kDeviceIdCardboardHmd = 0;
 
   static constexpr UnityXRInputDeviceCharacteristics kHmdCharacteristics =

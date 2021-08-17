@@ -230,14 +230,6 @@ CardboardUv CardboardLensDistortion_distortedUvForUndistortedUv(
   return ret;
 }
 
-CardboardDistortionRenderer* CardboardMetalDistortionRenderer_create() {
-  if (CARDBOARD_IS_NOT_INITIALIZED()) {
-    return nullptr;
-  }
-  CARDBOARD_LOGE("Metal rendering API not available");
-  return nullptr;
-}
-
 CardboardDistortionRenderer* CardboardVulkanDistortionRenderer_create() {
   if (CARDBOARD_IS_NOT_INITIALIZED()) {
     return nullptr;
@@ -265,7 +257,7 @@ void CardboardDistortionRenderer_setMesh(CardboardDistortionRenderer* renderer,
 }
 
 void CardboardDistortionRenderer_renderEyeToDisplay(
-    CardboardDistortionRenderer* renderer, int target_display, int x, int y,
+    CardboardDistortionRenderer* renderer, uint64_t target, int x, int y,
     int width, int height, const CardboardEyeTextureDescription* left_eye,
     const CardboardEyeTextureDescription* right_eye) {
   if (CARDBOARD_IS_NOT_INITIALIZED() || CARDBOARD_IS_ARG_NULL(renderer) ||
@@ -273,7 +265,7 @@ void CardboardDistortionRenderer_renderEyeToDisplay(
     return;
   }
   static_cast<cardboard::DistortionRenderer*>(renderer)->RenderEyeToDisplay(
-      target_display, x, y, width, height, left_eye, right_eye);
+      target, x, y, width, height, left_eye, right_eye);
 }
 
 CardboardHeadTracker* CardboardHeadTracker_create() {
@@ -304,9 +296,10 @@ void CardboardHeadTracker_resume(CardboardHeadTracker* head_tracker) {
   static_cast<cardboard::HeadTracker*>(head_tracker)->Resume();
 }
 
-void CardboardHeadTracker_getPose(CardboardHeadTracker* head_tracker,
-                                  int64_t timestamp_ns, float* position,
-                                  float* orientation) {
+void CardboardHeadTracker_getPose(
+    CardboardHeadTracker* head_tracker, int64_t timestamp_ns,
+    CardboardViewportOrientation viewport_orientation, float* position,
+    float* orientation) {
   if (CARDBOARD_IS_NOT_INITIALIZED() || CARDBOARD_IS_ARG_NULL(head_tracker) ||
       CARDBOARD_IS_ARG_NULL(position) || CARDBOARD_IS_ARG_NULL(orientation)) {
     GetDefaultPosition(position);
@@ -316,9 +309,16 @@ void CardboardHeadTracker_getPose(CardboardHeadTracker* head_tracker,
   std::array<float, 3> out_position;
   std::array<float, 4> out_orientation;
   static_cast<cardboard::HeadTracker*>(head_tracker)
-      ->GetPose(timestamp_ns, out_position, out_orientation);
+      ->GetPose(timestamp_ns, viewport_orientation, out_position, out_orientation);
   std::memcpy(position, &out_position[0], 3 * sizeof(float));
   std::memcpy(orientation, &out_orientation[0], 4 * sizeof(float));
+}
+
+void CardboardHeadTracker_recenter(CardboardHeadTracker* head_tracker) {
+  if (CARDBOARD_IS_NOT_INITIALIZED() || CARDBOARD_IS_ARG_NULL(head_tracker)) {
+    return;
+  }
+  static_cast<cardboard::HeadTracker*>(head_tracker)->Recenter();
 }
 
 void CardboardQrCode_getSavedDeviceParams(uint8_t** encoded_device_params,
@@ -331,7 +331,7 @@ void CardboardQrCode_getSavedDeviceParams(uint8_t** encoded_device_params,
   }
   std::vector<uint8_t> device_params =
       cardboard::qrcode::getCurrentSavedDeviceParams();
-  *size = device_params.size();
+  *size = static_cast<int>(device_params.size());
   *encoded_device_params = new uint8_t[*size];
   memcpy(*encoded_device_params, &device_params[0], *size);
 }
@@ -344,6 +344,19 @@ void CardboardQrCode_destroy(const uint8_t* encoded_device_params) {
   delete[] encoded_device_params;
 }
 
+void CardboardQrCode_saveDeviceParams(const uint8_t* uri, int size) {
+  if (CARDBOARD_IS_NOT_INITIALIZED() || CARDBOARD_IS_ARG_NULL(uri)) {
+    return;
+  }
+  if (size <= 0) {
+    CARDBOARD_LOGE(
+        "[%s : %d] Argument size is not valid. It must be higher than zero.",
+        __FILE__, __LINE__);
+    return;
+  }
+  cardboard::qrcode::saveDeviceParams(uri, size);
+}
+
 void CardboardQrCode_scanQrCodeAndSaveDeviceParams() {
   if (CARDBOARD_IS_NOT_INITIALIZED()) {
     return;
@@ -351,17 +364,16 @@ void CardboardQrCode_scanQrCodeAndSaveDeviceParams() {
   cardboard::qrcode::scanQrCodeAndSaveDeviceParams();
 }
 
-int CardboardQrCode_getQrCodeScanCount() {
+int CardboardQrCode_getDeviceParamsChangedCount() {
   if (CARDBOARD_IS_NOT_INITIALIZED()) {
     return 0;
   }
-  return cardboard::qrcode::getQrCodeScanCount();
+  return cardboard::qrcode::getDeviceParamsChangedCount();
 }
 
 void CardboardQrCode_getCardboardV1DeviceParams(uint8_t** encoded_device_params,
                                                 int* size) {
-  if (CARDBOARD_IS_NOT_INITIALIZED() ||
-      CARDBOARD_IS_ARG_NULL(encoded_device_params) ||
+  if (CARDBOARD_IS_ARG_NULL(encoded_device_params) ||
       CARDBOARD_IS_ARG_NULL(size)) {
     GetDefaultEncodedDeviceParams(encoded_device_params, size);
     return;
@@ -369,7 +381,7 @@ void CardboardQrCode_getCardboardV1DeviceParams(uint8_t** encoded_device_params,
   static std::vector<uint8_t> cardboard_v1_device_param =
       cardboard::qrcode::getCardboardV1DeviceParams();
   *encoded_device_params = cardboard_v1_device_param.data();
-  *size = cardboard_v1_device_param.size();
+  *size = static_cast<int>(cardboard_v1_device_param.size());
 }
 
 }  // extern "C"

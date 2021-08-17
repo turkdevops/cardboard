@@ -16,19 +16,21 @@
 #import "qr_code.h"
 
 #import <AVFoundation/AVFoundation.h>
-#import <libkern/OSAtomic.h>
 #import <UIKit/UIKit.h>
+
+#import <atomic>
 
 #import "qrcode/ios/device_params_helper.h"
 #import "qrcode/ios/qr_scan_view_controller.h"
+#import "util/logging.h"
 
 namespace cardboard {
 namespace qrcode {
 namespace {
 
-volatile int32_t qrCodeScanCount = 0;
+std::atomic<int32_t> deviceParamsChangedCount = {0};
 
-void incrementQrCodeScanCount() { OSAtomicIncrement32Barrier(&qrCodeScanCount); }
+void incrementDeviceParamsChangedCount() { std::atomic_fetch_add(&deviceParamsChangedCount, 1); }
 
 void showQRScanViewController() {
   UIViewController *presentingViewController = nil;
@@ -41,8 +43,8 @@ void showQRScanViewController() {
   }
 
   __block CardboardQRScanViewController *qrViewController =
-      [[CardboardQRScanViewController alloc] initWithCompletion:^(BOOL succeeded) {
-        incrementQrCodeScanCount();
+      [[CardboardQRScanViewController alloc] initWithCompletion:^(BOOL /*succeeded*/) {
+        incrementDeviceParamsChangedCount();
         [qrViewController dismissViewControllerAnimated:YES completion:nil];
       }];
 
@@ -52,7 +54,7 @@ void showQRScanViewController() {
 
 void requestPermissionInSettings() {
   NSURL *settingURL = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-  [UIApplication.sharedApplication openURL:settingURL];
+  [UIApplication.sharedApplication openURL:settingURL options:@{} completionHandler:nil];
 }
 
 void prerequestCameraPermissionForQRScan() {
@@ -97,7 +99,38 @@ void scanQrCodeAndSaveDeviceParams() {
   }
 }
 
-int getQrCodeScanCount() { return qrCodeScanCount; }
+void saveDeviceParams(const uint8_t *uri, int /*size*/) {
+  NSString *uriAsString = [NSString stringWithUTF8String:reinterpret_cast<const char *>(uri)];
+  if (![uriAsString hasPrefix:@"http://"] && ![uriAsString hasPrefix:@"https://"]) {
+    uriAsString = [NSString stringWithFormat:@"%@%@", @"https://", uriAsString];
+  }
+
+  // Check whether the URI is valid.
+  NSURL *url = [NSURL URLWithString:uriAsString];
+  if (!url) {
+    CARDBOARD_LOGE("Invalid URI: %@", uriAsString);
+    return;
+  }
+
+  // Get the device params from the provided URL and save them to storage.
+  [CardboardDeviceParamsHelper
+      resolveAndUpdateViewerProfileFromURL:url
+                            withCompletion:^(BOOL success, NSError *error) {
+                              if (success) {
+                                CARDBOARD_LOGI("Successfully saved device parameters to storage");
+                              } else {
+                                if (error) {
+                                  CARDBOARD_LOGE(
+                                      "Error when trying to get the device params from the URI: %@",
+                                      error);
+                                } else {
+                                  CARDBOARD_LOGE("Error when saving device parameters to storage");
+                                }
+                              }
+                            }];
+}
+
+int getDeviceParamsChangedCount() { return deviceParamsChangedCount; }
 
 }  // namespace qrcode
 }  // namespace cardboard

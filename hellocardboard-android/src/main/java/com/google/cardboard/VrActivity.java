@@ -26,7 +26,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,8 +35,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.PopupMenu;
 import android.widget.Toast;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -46,6 +46,8 @@ import javax.microedition.khronos.opengles.GL10;
  * <p>This is the main Activity for the sample application. It initializes a GLSurfaceView to allow
  * rendering.
  */
+// TODO(b/184737638): Remove decorator once the AndroidX migration is completed.
+@SuppressWarnings("deprecation")
 public class VrActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
   static {
     System.loadLibrary("cardboard_jni");

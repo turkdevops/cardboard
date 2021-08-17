@@ -15,21 +15,54 @@
  */
 #include "head_tracker.h"
 
+#include "include/cardboard.h"
 #include "sensors/neck_model.h"
-#include "sensors/pose_prediction.h"
 #include "util/logging.h"
+#include "util/rotation.h"
 #include "util/vector.h"
 #include "util/vectorutils.h"
 
 namespace cardboard {
+
+const std::array<Rotation, 4> HeadTracker::kEkfToHeadTrackerRotations{
+    // LandscapeLeft: This is the same than initializing the rotation from
+    // Rotation::FromYawPitchRoll(-M_PI / 2., 0, -M_PI / 2.).
+    Rotation::FromQuaternion(Rotation::QuaternionType(0.5, -0.5, -0.5, 0.5)),
+    // LandscapeRight: This is the same than initializing the rotation from
+    // Rotation::FromYawPitchRoll(M_PI / 2., 0, M_PI / 2.).
+    Rotation::FromQuaternion(Rotation::QuaternionType(0.5, 0.5, 0.5, 0.5)),
+    // Portrait: This is the same than initializing the rotation from
+    // Rotation::FromYawPitchRoll(M_PI / 2., M_PI / 2., M_PI / 2.).
+    Rotation::FromQuaternion(Rotation::QuaternionType(0.7071067811865476, 0.,
+                                                      0., 0.7071067811865476)),
+    // Portrait upside down: This is the same than initializing the rotation
+    // from Rotation::FromYawPitchRoll(-M_PI / 2., -M_PI / 2., -M_PI / 2.).
+    Rotation::FromQuaternion(Rotation::QuaternionType(
+        0., -0.7071067811865476, -0.7071067811865476, 0.))};
+
+const std::array<Rotation, 4> HeadTracker::kSensorToDisplayRotations{
+    // LandscapeLeft: This is the same than initializing the rotation from
+    // Rotation::FromAxisAndAngle(Vector3(0., 0., 1.), M_PI / 2.).
+    Rotation::FromQuaternion(Rotation::QuaternionType(
+        0., 0., 0.7071067811865476, 0.7071067811865476)),
+    // LandscapeRight: This is the same than initializing the rotation from
+    // Rotation::FromAxisAndAngle(Vector3(0., 0., 1.), -M_PI / 2.).
+    Rotation::FromQuaternion(Rotation::QuaternionType(
+        0., 0., -0.7071067811865476, 0.7071067811865476)),
+    // Portrait: This is the same than initializing the rotation from
+    // Rotation::FromAxisAndAngle(Vector3(0., 0., 1.), 0.).
+    Rotation::FromQuaternion(Rotation::QuaternionType(0., 0., 0., 1.)),
+    // PortaitUpsideDown: This is the same than initializing the rotation from
+    // Rotation::FromAxisAndAngle(Vector3(0., 0., 1.), M_PI).
+    Rotation::FromQuaternion(Rotation::QuaternionType(0., 0., 1., 0.))};
 
 HeadTracker::HeadTracker()
     : is_tracking_(false),
       sensor_fusion_(new SensorFusionEkf()),
       latest_gyroscope_data_({0, 0, Vector3::Zero()}),
       accel_sensor_(new SensorEventProducer<AccelerometerData>()),
-      gyro_sensor_(new SensorEventProducer<GyroscopeData>()) {
-  sensor_fusion_->SetBiasEstimationEnabled(/*kGyroBiasEstimationEnabled*/ true);
+      gyro_sensor_(new SensorEventProducer<GyroscopeData>()),
+      recenter_rotations_() {
   on_accel_callback_ = [&](const AccelerometerData& event) {
     OnAccelerometerData(event);
   };
@@ -63,45 +96,25 @@ void HeadTracker::Resume() {
 }
 
 void HeadTracker::GetPose(int64_t timestamp_ns,
+                          CardboardViewportOrientation viewport_orientation,
                           std::array<float, 3>& out_position,
                           std::array<float, 4>& out_orientation) const {
-  Rotation predicted_rotation;
-  const PoseState pose_state = sensor_fusion_->GetLatestPoseState();
-  if (!sensor_fusion_->IsFullyInitialized()) {
-    CARDBOARD_LOGI(
-        "Head Tracker not fully initialized yet. Using pose prediction only.");
-    predicted_rotation = pose_prediction::PredictPose(timestamp_ns, pose_state);
-  } else {
-    predicted_rotation = pose_state.sensor_from_start_rotation;
-  }
+  const Vector4 orientation =
+      GetRotation(viewport_orientation, timestamp_ns).GetQuaternion();
 
-  // In order to update our pose as the sensor changes, we begin with the
-  // inverse default orientation (the orientation returned by a reset sensor),
-  // apply the current sensor transformation, and then transform into display
-  // space.
-  // TODO(b/135488467): Support different screen orientations.
-  const Rotation ekf_to_head_tracker =
-      Rotation::FromYawPitchRoll(-M_PI / 2.0, 0, -M_PI / 2.0);
-  const Rotation sensor_to_display =
-      Rotation::FromAxisAndAngle(Vector3(0, 0, 1), M_PI / 2.0);
-
-  const Vector4 q =
-      (sensor_to_display * predicted_rotation * ekf_to_head_tracker)
-          .GetQuaternion();
-  Rotation rotation;
-  rotation.SetQuaternion(q);
-
-  out_orientation[0] = static_cast<float>(rotation.GetQuaternion()[0]);
-  out_orientation[1] = static_cast<float>(rotation.GetQuaternion()[1]);
-  out_orientation[2] = static_cast<float>(rotation.GetQuaternion()[2]);
-  out_orientation[3] = static_cast<float>(rotation.GetQuaternion()[3]);
+  out_orientation[0] = static_cast<float>(orientation[0]);
+  out_orientation[1] = static_cast<float>(orientation[1]);
+  out_orientation[2] = static_cast<float>(orientation[2]);
+  out_orientation[3] = static_cast<float>(orientation[3]);
 
   out_position = ApplyNeckModel(out_orientation, 1.0);
 }
 
-Rotation HeadTracker::GetDefaultOrientation() const {
-  return Rotation::FromRotationMatrix(
-      Matrix3x3(0.0, -1.0, 0.0, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0));
+void HeadTracker::Recenter() {
+  for (const auto viewport_orientation :
+       {kLandscapeLeft, kLandscapeRight, kPortrait, kPortraitUpsideDown}) {
+    SetRecenterRotationFromViewportOrientation(viewport_orientation);
+  }
 }
 
 void HeadTracker::RegisterCallbacks() {
@@ -127,6 +140,29 @@ void HeadTracker::OnGyroscopeData(const GyroscopeData& event) {
   }
   latest_gyroscope_data_ = event;
   sensor_fusion_->ProcessGyroscopeSample(event);
+}
+
+Rotation HeadTracker::GetRotation(
+    CardboardViewportOrientation viewport_orientation,
+    int64_t timestamp_ns) const {
+  const Rotation predicted_rotation =
+      sensor_fusion_->PredictRotation(timestamp_ns);
+
+  // In order to update our pose as the sensor changes, we begin with the
+  // inverse default orientation (the orientation returned by a reset sensor),
+  // apply the current sensor transformation, then transform into display
+  // space, and lastly multiply by the recentering rotation.
+  return kSensorToDisplayRotations[viewport_orientation] * predicted_rotation *
+         kEkfToHeadTrackerRotations[viewport_orientation] *
+         recenter_rotations_[viewport_orientation];
+}
+
+void HeadTracker::SetRecenterRotationFromViewportOrientation(
+    CardboardViewportOrientation viewport_orientation) {
+  const double yaw_angle =
+      GetRotation(viewport_orientation, 0 /* now */).GetYawAngle();
+  recenter_rotations_[viewport_orientation] *=
+      Rotation::FromYawPitchRoll(-yaw_angle, 0., 0.);
 }
 
 }  // namespace cardboard

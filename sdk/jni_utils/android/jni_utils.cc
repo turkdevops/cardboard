@@ -15,14 +15,33 @@
  */
 #include "jni_utils/android/jni_utils.h"
 
-namespace cardboard {
-namespace jni {
+#include "util/logging.h"
 
-void CheckExceptionInJava(JNIEnv* env) {
-  if (env->ExceptionOccurred()) {
+namespace cardboard::jni {
+namespace {
+
+jclass runtime_excepton_class_;
+
+void LoadJNIResources(JNIEnv* env) {
+  runtime_excepton_class_ =
+      cardboard::jni::LoadJClass(env, "java/lang/RuntimeException");
+}
+
+}  // anonymous namespace
+
+void initializeAndroid(JavaVM* vm, jobject /*context*/) {
+  JNIEnv* env;
+  LoadJNIEnv(vm, &env);
+  LoadJNIResources(env);
+}
+
+bool CheckExceptionInJava(JNIEnv* env) {
+  const bool exception_occurred = env->ExceptionOccurred();
+  if (exception_occurred) {
     env->ExceptionDescribe();
     env->ExceptionClear();
   }
+  return exception_occurred;
 }
 
 void LoadJNIEnv(JavaVM* vm, JNIEnv** env) {
@@ -46,5 +65,9 @@ jclass LoadJClass(JNIEnv* env, const char* class_name) {
   return static_cast<jclass>(env->NewGlobalRef(local));
 }
 
-}  // namespace jni
-}  // namespace cardboard
+void ThrowJavaRuntimeException(JNIEnv* env, const char* msg) {
+  CARDBOARD_LOGE("Throw Java RuntimeException: %s", msg);
+  env->ThrowNew(runtime_excepton_class_, msg);
+}
+
+}  // namespace cardboard::jni

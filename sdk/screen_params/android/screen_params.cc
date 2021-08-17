@@ -19,8 +19,7 @@
 
 #include "jni_utils/android/jni_utils.h"
 
-namespace cardboard {
-namespace screen_params {
+namespace cardboard::screen_params {
 
 namespace {
 JavaVM* vm_;
@@ -34,13 +33,15 @@ struct DisplayMetrics {
   float ydpi;
 };
 
+// TODO(b/180938531): Release these global references.
 void LoadJNIResources(JNIEnv* env) {
-  screen_params_utils_class_ = cardboard::jni::LoadJClass(
-      env, "com/google/cardboard/sdk/screenparams/ScreenParamsUtils");
-  screen_pixel_density_class_ =
+  screen_params_utils_class_ =
+      reinterpret_cast<jclass>(env->NewGlobalRef(cardboard::jni::LoadJClass(
+          env, "com/google/cardboard/sdk/screenparams/ScreenParamsUtils")));
+  screen_pixel_density_class_ = reinterpret_cast<jclass>(env->NewGlobalRef(
       cardboard::jni::LoadJClass(env,
                                  "com/google/cardboard/sdk/screenparams/"
-                                 "ScreenParamsUtils$ScreenPixelDensity");
+                                 "ScreenParamsUtils$ScreenPixelDensity")));
 }
 
 DisplayMetrics getDisplayMetrics() {
@@ -82,5 +83,4 @@ void getScreenSizeInMeters(int width_pixels, int height_pixels,
   *out_height_meters = (height_pixels / display_metrics.ydpi) * kMetersPerInch;
 }
 
-}  // namespace screen_params
-}  // namespace cardboard
+}  // namespace cardboard::screen_params
