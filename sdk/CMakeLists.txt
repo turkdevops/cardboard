@@ -49,19 +49,26 @@ file(GLOB screen_params_srcs "screen_params/android/*.cc")
 # Device Params Sources
 file(GLOB device_params_srcs "device_params/android/*.cc")
 # Rendering Sources
-file(GLOB rendering_srcs "rendering/opengl_*.cc")
+file(GLOB rendering_opengl_srcs "rendering/opengl_*.cc")
+# #vulkan This is required for Vulkan rendering. Remove the following two lines
+# if Vulkan rendering is not needed.
+file(GLOB rendering_vulkan_srcs "rendering/android/*.cc")
+file(GLOB rendering_vulkan_wrapper_srcs "rendering/android/vulkan/*.cc")
 
 # === Cardboard Unity JNI ===
 file(GLOB cardboard_unity_jni_srcs "unity/android/*.cc")
 
 # === Cardboard Unity Wrapper ===
-file(GLOB cardboard_xr_unity_srcs "unity/xr_unity_plugin/*.cc")
+file(GLOB cardboard_xr_unity_srcs
+  "unity/xr_unity_plugin/*.cc"
+  "unity/xr_unity_plugin/vulkan/*.cc"
+)
 
 # === Cardboard XR Provider for Unity ===
 file(GLOB cardboard_xr_provider_srcs "unity/xr_provider/*.cc")
 
 # Output binary
-add_library(cardboard_api SHARED
+add_library(GfxPluginCardboard SHARED
     # Cardboard API sources.
     ${cardboard_v1_srcs}
     ${general_srcs}
@@ -72,7 +79,11 @@ add_library(cardboard_api SHARED
     ${qrcode_srcs}
     ${screen_params_srcs}
     ${device_params_srcs}
-    ${rendering_srcs}
+    ${rendering_opengl_srcs}
+    # #vulkan This is required for Vulkan rendering. Remove the following two
+    # lines if Vulkan rendering is not needed.
+    ${rendering_vulkan_srcs}
+    ${rendering_vulkan_wrapper_srcs}
     # Cardboard Unity JNI sources
     ${cardboard_unity_jni_srcs}
     # Cardboard Unity Wrapper sources
@@ -81,14 +92,23 @@ add_library(cardboard_api SHARED
     ${cardboard_xr_provider_srcs})
 
 # Includes
-target_include_directories(cardboard_api
+target_include_directories(GfxPluginCardboard
     PRIVATE ../third_party/unity_plugin_api)
 
+# #vulkan This is required for Vulkan rendering. Remove the following line if
+# Vulkan rendering is not needed.
+add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR=1)
+
 # Build
-target_link_libraries(cardboard_api
+target_link_libraries(GfxPluginCardboard
     ${android-lib}
     ${GLESv2-lib}
     # #gles3 - Library is only needed if OpenGL ES 3.0 support is desired.
     # Remove the following line if OpenGL ES 3.0 support is not needed.
     ${GLESv3-lib}
-    ${log-lib})
+    ${log-lib}
+    # #vulkan - This is required for Vulkan rendering (it is required to load
+    # libvulkan.so at runtime). Remove the following line if Vulkan rendering
+    # is not needed
+    dl
+)

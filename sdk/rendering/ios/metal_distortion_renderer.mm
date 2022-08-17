@@ -159,7 +159,7 @@ class MetalDistortionRenderer : public DistortionRenderer {
 
   void RenderEyeToDisplay(uint64_t target, int x, int y, int width, int height,
                           const CardboardEyeTextureDescription* left_eye,
-                          const CardboardEyeTextureDescription* right_eye) const override {
+                          const CardboardEyeTextureDescription* right_eye) override {
     if (!is_initialized_) {
       return;
     }
@@ -170,8 +170,8 @@ class MetalDistortionRenderer : public DistortionRenderer {
       return;
     }
 
-    CardboardDistortionRendererTargetConfig* target_config =
-        reinterpret_cast<CardboardDistortionRendererTargetConfig*>(target);
+    CardboardMetalDistortionRendererTargetConfig* target_config =
+        reinterpret_cast<CardboardMetalDistortionRendererTargetConfig*>(target);
     if (CARDBOARD_IS_ARG_NULL(target_config)) {
       return;
     }

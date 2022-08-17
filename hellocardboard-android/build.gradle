@@ -1,17 +1,24 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    compileSdkVersion 31
     lintOptions {
         abortOnError false
     }
     defaultConfig {
         applicationId "com.google.cardboard.hellocardboard"
-        minSdkVersion 18
-        targetSdkVersion 30
+        // #gles3 #vulkan - You can reduce minSdkVersion down to 16 depending
+        // on rendering APIs supported:
+        //
+        // OpenGL ES 2.0 - Requires 16 or higher
+        // OpenGL ES 3.0 - Requires 18 or higher
+        // Vulkan        - Requires 24 or higher
+        //
+        // See the release notes for details.
+        minSdkVersion 24
+        targetSdkVersion 31
         versionCode 1
-        versionName "1.7.0"
+        versionName "1.17.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a'
@@ -29,20 +36,16 @@ android {
     externalNativeBuild.cmake {
         path "CMakeLists.txt"
     }
-    compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
-    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
     // Android Mobile Vision
-    implementation 'com.google.android.gms:play-services-vision:15.0.2'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'com.google.protobuf:protobuf-javalite:3.8.0'
+    // TODO(b/213613345) Migrate to ML Kit.
+    implementation 'com.google.android.gms:play-services-vision:20.1.3'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.google.protobuf:protobuf-javalite:3.19.4'
     implementation project(":sdk")
 }
 
@@ -53,7 +56,7 @@ task extractNdk(type: Copy)  {
         copy {
             from zipTree("${project.rootDir}/sdk/build/outputs/aar/sdk-release.aar")
             into "libraries/"
-            include "jni/**/libcardboard_api.so"
+            include "jni/**/libGfxPluginCardboard.so"
         }
         copy {
             from "${project.rootDir}/sdk/include/cardboard.h"

@@ -88,6 +88,22 @@ typedef struct CardboardEyeTextureDescription {
   /// When using OpenGL ES 2.x and OpenGL ES 3.x, this field corresponds to a
   /// GLuint variable.
   ///
+  /// When using Vulkan, this field corresponds to an uint64_t address pointing
+  /// to a @c VkImage variable.The SDK client is expected to manage the
+  /// object ownership and to guarantee the pointer validity during the
+  /// @c ::CardboardDistortionRenderer_renderEyeToDisplay function execution
+  /// to ensure it is properly retained. Usage example:
+  ///
+  /// @code{.cc}
+  /// VkImage image;
+  /// // Initialize and set up the image...
+  /// CardboardEyeTextureDescription leftEye;
+  /// leftEye.texture = reinterpret_cast<uint64_t>(image)
+  /// // Fill remaining fields in leftEye...
+  /// CardboardDistortionRenderer_renderEyeToDisplay(..., &leftEye, ...);
+  /// // Clear previous image if it is needed.
+  /// @endcode
+  ///
   /// When using Metal, this field corresponds to a @c CFTypeRef
   /// variable pointing to a @c MTLTexture object. The SDK client is expected
   /// to manage the object ownership and to guarantee the pointer validity
@@ -129,18 +145,40 @@ typedef struct CardboardMetalDistortionRendererConfig {
   /// @endcode
   uint64_t mtl_device;
   /// Color attachment pixel format.
-  /// This field holds a [MTLPixelFormat enum value](https://developer.apple.com/documentation/metalkit/mtkview/1535940-colorpixelformat?language=objc).
+  /// This field holds a [MTLPixelFormat enum
+  /// value](https://developer.apple.com/documentation/metalkit/mtkview/1535940-colorpixelformat?language=objc).
   uint64_t color_attachment_pixel_format;
   /// Depth attachment pixel format.
-  /// This field holds a [MTLPixelFormat enum value](https://developer.apple.com/documentation/metalkit/mtkview/1535940-colorpixelformat?language=objc).
+  /// This field holds a [MTLPixelFormat enum
+  /// value](https://developer.apple.com/documentation/metalkit/mtkview/1535940-colorpixelformat?language=objc).
   uint64_t depth_attachment_pixel_format;
   /// Stencil attachment pixel format.
-  /// This field holds a [MTLPixelFormat enum value](https://developer.apple.com/documentation/metalkit/mtkview/1535940-colorpixelformat?language=objc).
+  /// This field holds a [MTLPixelFormat enum
+  /// value](https://developer.apple.com/documentation/metalkit/mtkview/1535940-colorpixelformat?language=objc).
   uint64_t stencil_attachment_pixel_format;
 } CardboardMetalDistortionRendererConfig;
 
+/// Struct to set Vulkan distortion renderer configuration.
+typedef struct CardboardVulkanDistortionRendererConfig {
+  /// The physical device available for the rendering.
+  /// This field holds a [VkPhysicalDevice
+  /// value](https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkPhysicalDevice.html).
+  /// Maintained by the user.
+  uint64_t physical_device;
+  /// The logical device available for the rendering.
+  /// This field holds a [VkDevice
+  /// value](https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkDevice.html).
+  /// Maintained by the user.
+  uint64_t logical_device;
+  /// The swapchain that owns the buffers into which the scene is rendered.
+  /// This field holds a [VkSwapchainKHR
+  /// value](https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkSwapchainKHR.html).
+  /// Maintained by the user.
+  uint64_t vk_swapchain;
+} CardboardVulkanDistortionRendererConfig;
+
 /// Struct to set Metal distortion renderer target configuration.
-typedef struct CardboardDistortionRendererTargetConfig {
+typedef struct CardboardMetalDistortionRendererTargetConfig {
   /// MTLRenderCommandEncoder id.
   /// This field holds a CFTypeRef variable pointing to a
   /// @c MTLRenderCommandEncoder object. The SDK client is expected to manage
@@ -149,7 +187,7 @@ typedef struct CardboardDistortionRendererTargetConfig {
   /// ensure it is properly retained. Usage example:
   ///
   /// @code{.m}
-  /// CardboardDistortionRendererTargetConfig target_config;
+  /// CardboardMetalDistortionRendererTargetConfig target_config;
   /// target_config.render_command_encoder =
   ///     CFBridgingRetain(renderCommandEncoder);
   /// CardboardDistortionRenderer_renderEyeToDisplay(..., &target_config, ...);
@@ -160,7 +198,28 @@ typedef struct CardboardDistortionRendererTargetConfig {
   int screen_width;
   /// Full height of the screen in pixels.
   int screen_height;
-} CardboardDistortionRendererTargetConfig;
+} CardboardMetalDistortionRendererTargetConfig;
+
+/// Struct to set Vulkan distortion renderer target.
+typedef struct CardboardVulkanDistortionRendererTarget {
+  /// The render pass object that will be used to bind vertex, indices and
+  /// descriptor set.
+  /// This field holds a [VkRenderPass
+  /// value](https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkRenderPass.html).
+  /// Maintained by the user.
+  uint64_t vk_render_pass;
+  /// The command buffer object.
+  /// This field holds a[VkCommandBuffer
+  /// value](https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkCommandBuffer.html).
+  /// Maintained by the user and this command buffer should be started before
+  /// calling the rendering function.
+  uint64_t vk_command_buffer;
+  /// The index of the image in the swapchain.
+  /// This number should NOT exceed the number of images in swapchain.
+  /// If this number is above the swapchain length, the distortion renderer
+  /// will stop and return directly.
+  uint32_t swapchain_image_index;
+} CardboardVulkanDistortionRendererTarget;
 
 /// An opaque Lens Distortion object.
 typedef struct CardboardLensDistortion CardboardLensDistortion;
@@ -194,15 +253,20 @@ extern "C" {
 ///   @p context:
 ///
 /// -
-/// <a href="https://developer.android.com/reference/android/content/Context#getFilesDir()">Context.getFilesDir()</a>
+/// <a
+/// href="https://developer.android.com/reference/android/content/Context#getFilesDir()">Context.getFilesDir()</a>
 /// -
-/// <a href="https://developer.android.com/reference/android/content/Context#getResources()">Context.getResources()</a>
+/// <a
+/// href="https://developer.android.com/reference/android/content/Context#getResources()">Context.getResources()</a>
 /// -
-/// <a href="https://developer.android.com/reference/android/content/Context#getSystemService(java.lang.String)">Context.getSystemService(Context.WINDOW_SERVICE)</a>
+/// <a
+/// href="https://developer.android.com/reference/android/content/Context#getSystemService(java.lang.String)">Context.getSystemService(Context.WINDOW_SERVICE)</a>
 /// -
-/// <a href="https://developer.android.com/reference/android/content/Context#startActivity(android.content.Intent)">Context.startActivity(Intent)</a>
+/// <a
+/// href="https://developer.android.com/reference/android/content/Context#startActivity(android.content.Intent)">Context.startActivity(Intent)</a>
 /// -
-/// <a href="https://developer.android.com/reference/android/content/Context#getDisplay()">Context.getDisplay()</a>
+/// <a
+/// href="https://developer.android.com/reference/android/content/Context#getDisplay()">Context.getDisplay()</a>
 ///
 /// @pre @p vm Must not be null.
 /// @pre @p context Must not be null.
@@ -381,8 +445,10 @@ CardboardDistortionRenderer* CardboardMetalDistortionRenderer_create(
 /// Creates a new distortion renderer object. It uses Vulkan as the rendering
 /// API. Must be called from the render thread.
 ///
+/// @param[in]      config                  Distortion renderer configuration.
 /// @return         Distortion renderer object pointer
-CardboardDistortionRenderer* CardboardVulkanDistortionRenderer_create();
+CardboardDistortionRenderer* CardboardVulkanDistortionRenderer_create(
+    const CardboardVulkanDistortionRendererConfig* config);
 
 /// Destroys and releases memory used by the provided distortion renderer
 /// object. Must be called from render thread.
@@ -413,13 +479,18 @@ void CardboardDistortionRenderer_setMesh(CardboardDistortionRenderer* renderer,
 /// @pre @p renderer Must not be null.
 /// @pre @p left_eye Must not be null.
 /// @pre @p right_eye Must not be null.
+/// @pre @p renderer.command_buffer Must be started.
 /// When it is unmet, a call to this function results in a no-op.
 ///
 /// @param[in]      renderer                Distortion renderer object pointer.
 /// @param[in]      target                  Target configuration.
-///     When using OpenGL ES 2.x and OpenGL ES 3.x, this field corresponds to a
-///     GLuint variable. When using Metal, this field corresponds to a variable
-///     pointing to an CardboardDistortionRendererTargetConfig structure.
+///     This parameter is some other type transformed via `reinterpret_cast`
+///     to a `uint64_t`. The original type of this parameter depends on the
+///     underlying API used as follows:
+///
+///     * OpenGL ES 2.x or 3.x: @c GLuint.
+///     * Metal: @c CardboardMetalDistortionRendererTargetConfig*.
+///     * Vulkan: @c CardboardVulkanDistortionRendererTarget*.
 /// @param[in]      x                       x coordinate of the rectangle's
 ///                                         lower left corner in pixels.
 /// @param[in]      y                       y coordinate of the rectangle's
@@ -504,10 +575,13 @@ void CardboardHeadTracker_resume(CardboardHeadTracker* head_tracker);
 ///
 /// @details On Android devices, @p timestamp_ns must be in system boot time
 ///          (see [CLOCK_BOOTTIME](https://linux.die.net/man/2/clock_gettime))
-///          clock (see [Android Timestamp](https://developer.android.com/reference/android/hardware/SensorEvent#timestamp)).
+///          clock (see [Android
+///          Timestamp](https://developer.android.com/reference/android/hardware/SensorEvent#timestamp)).
 ///          On iOS devices, @p timestamp_ns must be in system uptime raw
-///          (see [CLOCK_UPTIME_RAW](http://www.manpagez.com/man/3/clock_gettime/))
-///          clock (see [Apple Timestamp](https://developer.apple.com/documentation/coremotion/cmlogitem/1615939-timestamp?language=objc)).
+///          (see
+///          [CLOCK_UPTIME_RAW](http://www.manpagez.com/man/3/clock_gettime/))
+///          clock (see [Apple
+///          Timestamp](https://developer.apple.com/documentation/coremotion/cmlogitem/1615939-timestamp?language=objc)).
 ///
 /// @pre @p head_tracker Must not be null.
 /// @pre @p position Must not be null.
@@ -528,12 +602,9 @@ void CardboardHeadTracker_getPose(
 
 /// Recenters the head tracker.
 ///
-/// @details        Let Q_0 be the rotation quaternion that makes an
-///                 arbitrary orientation aligned with a zero yaw angle.
-///                 This function computes Q_0 with the current pose, and
-///                 saves it as a rotation attribute in @p head_tracker.
-///                 Future calls to CardboardHeadTracker_getPose() will be
-///                 affected by Q_0.
+/// @details        By recentering, the @p head_tracker orientation gets aligned
+///                 with a zero yaw angle.
+///
 /// @pre @p head_tracker Must not be null.
 ///
 /// @param[in]      head_tracker            Head tracker object pointer.

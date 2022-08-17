@@ -173,6 +173,15 @@ class MetalRenderer : public Renderer {
     }
   }
 
+  void RunRenderingPreProcessing(
+      const ScreenParams& /* screen_params */) override {
+    // Nothing to do.
+  }
+
+  void RunRenderingPostProcessing() override {
+    // Nothing to do.
+  }
+
   void TeardownWidgets() override {
     CARDBOARD_LOGD("TeardownWidgets is a no-op method when using Metal.");
   }
@@ -248,7 +257,7 @@ class MetalRenderer : public Renderer {
     // TODO(b/185478026): Prevent Unity from drawing a monocular scene when using Metal.
     RenderBlackTexture(screen_params.width, screen_params.height);
 
-    const CardboardDistortionRendererTargetConfig target_config{
+    const CardboardMetalDistortionRendererTargetConfig target_config{
         reinterpret_cast<uint64_t>(CFBridgingRetain(metal_interface_->CurrentCommandEncoder())),
         screen_params.width, screen_params.height};
 
@@ -360,7 +369,7 @@ CardboardDistortionRenderer* MakeCardboardMetalDistortionRenderer(IUnityInterfac
   IUnityGraphicsMetalV1* metal_interface = xr_interfaces->Get<IUnityGraphicsMetalV1>();
   const CardboardMetalDistortionRendererConfig config{
       reinterpret_cast<uint64_t>(CFBridgingRetain(metal_interface->MetalDevice())),
-      MTLPixelFormatRGBA8Unorm, MTLPixelFormatDepth32Float_Stencil8,
+      MTLPixelFormatBGRA8Unorm, MTLPixelFormatDepth32Float_Stencil8,
       MTLPixelFormatDepth32Float_Stencil8};
 
   CardboardDistortionRenderer* distortion_renderer =

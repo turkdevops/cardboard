@@ -7,13 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0F2363882492E2080009924A /* cardboard_xr_unity.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0FF99B2524587233001FF78F /* cardboard_xr_unity.h */; };
 		0F29AA5F255AC37F00154BD0 /* opengl_es3_distortion_renderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0F29AA5E255AC37F00154BD0 /* opengl_es3_distortion_renderer.cc */; };
 		0F29AA62255AC3A200154BD0 /* is_initialized.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0F29AA61255AC3A200154BD0 /* is_initialized.cc */; };
 		0F6BA71F25CC53E100C1B015 /* opengl_es2_renderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0F6BA71D25CC53E100C1B015 /* opengl_es2_renderer.cc */; };
 		0F6BA72025CC53E100C1B015 /* opengl_es3_renderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0F6BA71E25CC53E100C1B015 /* opengl_es3_renderer.cc */; };
 		0F6BA72425CC5B7D00C1B015 /* metal_renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F6BA72325CC5B7D00C1B015 /* metal_renderer.mm */; };
-		0F8D4FDF2361F86A00E7C48D /* libprotobuf-lite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F8D4FDE2361F86A00E7C48D /* libprotobuf-lite.a */; };
 		0F984F7A25C047860033D5C6 /* metal_distortion_renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F984F7925C047860033D5C6 /* metal_distortion_renderer.mm */; };
 		0FD2023E23575F3B00B3C342 /* screen_params.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FD201FA23575F3A00B3C342 /* screen_params.mm */; };
 		0FD2023F23575F3B00B3C342 /* rotation.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0FD201FD23575F3A00B3C342 /* rotation.cc */; };
@@ -37,7 +35,6 @@
 		0FD2025323575F3B00B3C342 /* polynomial_radial_distortion.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0FD2023023575F3B00B3C342 /* polynomial_radial_distortion.cc */; };
 		0FD2025423575F3B00B3C342 /* qr_scan_view_controller.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FD2023323575F3B00B3C342 /* qr_scan_view_controller.mm */; };
 		0FD2025523575F3B00B3C342 /* qr_code.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FD2023423575F3B00B3C342 /* qr_code.mm */; };
-		0FD2025623575F3B00B3C342 /* nsurl_connection_data_handler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FD2023723575F3B00B3C342 /* nsurl_connection_data_handler.mm */; };
 		0FD2025723575F3B00B3C342 /* device_params_helper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FD2023823575F3B00B3C342 /* device_params_helper.mm */; };
 		0FD2025823575F3B00B3C342 /* cardboard_v1.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0FD2023B23575F3B00B3C342 /* cardboard_v1.cc */; };
 		0FD2025923575F3B00B3C342 /* distortion_mesh.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0FD2023D23575F3B00B3C342 /* distortion_mesh.cc */; };
@@ -45,12 +42,14 @@
 		0FD2027C235766E800B3C342 /* cardboard.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0FD2022B23575F3B00B3C342 /* cardboard.h */; };
 		0FECE29825BB2760009C662C /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FECE29725BB2760009C662C /* Metal.framework */; };
 		0FECE29A25BB276D009C662C /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FECE29925BB276D009C662C /* MetalKit.framework */; };
-		0FF99B2724587233001FF78F /* cardboard_xr_unity.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0FF99B2624587233001FF78F /* cardboard_xr_unity.cc */; };
+		0FEDA006283670070023E8C8 /* nsurl_session_data_handler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FEDA004283670070023E8C8 /* nsurl_session_data_handler.mm */; };
 		7B2ADACB24E4779500FEBAA8 /* opengl_es2_distortion_renderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7B2ADAC924E4779500FEBAA8 /* opengl_es2_distortion_renderer.cc */; };
 		7B76813A24A3FA6B00E92050 /* input.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7B76813424A3FA6B00E92050 /* input.cc */; };
 		7B76813B24A3FA6B00E92050 /* display.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7B76813524A3FA6B00E92050 /* display.cc */; };
 		7B76813C24A3FA6B00E92050 /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7B76813624A3FA6B00E92050 /* main.cc */; };
 		7B76813D24A3FA6B00E92050 /* math_tools.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7B76813724A3FA6B00E92050 /* math_tools.cc */; };
+		E01C984226B44A72001BB0E3 /* cardboard_display_api.cc in Sources */ = {isa = PBXBuildFile; fileRef = E01C984026B44A71001BB0E3 /* cardboard_display_api.cc */; };
+		E0DFCFED26B3474400F285A5 /* cardboard_input_api.cc in Sources */ = {isa = PBXBuildFile; fileRef = E0DFCFEC26B3474400F285A5 /* cardboard_input_api.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -60,7 +59,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
-				0F2363882492E2080009924A /* cardboard_xr_unity.h in CopyFiles */,
 				0FD2027C235766E800B3C342 /* cardboard.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -76,9 +74,8 @@
 		0F6BA71D25CC53E100C1B015 /* opengl_es2_renderer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opengl_es2_renderer.cc; sourceTree = "<group>"; };
 		0F6BA71E25CC53E100C1B015 /* opengl_es3_renderer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opengl_es3_renderer.cc; sourceTree = "<group>"; };
 		0F6BA72325CC5B7D00C1B015 /* metal_renderer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = metal_renderer.mm; sourceTree = "<group>"; };
-		0F8D4FDE2361F86A00E7C48D /* libprotobuf-lite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libprotobuf-lite.a"; path = "../third_party/libprotobuf/ios/lib/libprotobuf-lite.a"; sourceTree = "<group>"; };
 		0F984F7925C047860033D5C6 /* metal_distortion_renderer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = metal_distortion_renderer.mm; sourceTree = "<group>"; };
-		0FD200852357511E00B3C342 /* cardboard_api.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = cardboard_api.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FD200852357511E00B3C342 /* GfxPluginCardboard.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = GfxPluginCardboard.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FD201FA23575F3A00B3C342 /* screen_params.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = screen_params.mm; sourceTree = "<group>"; };
 		0FD201FB23575F3A00B3C342 /* lens_distortion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lens_distortion.h; sourceTree = "<group>"; };
 		0FD201FD23575F3A00B3C342 /* rotation.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rotation.cc; sourceTree = "<group>"; };
@@ -130,20 +127,17 @@
 		0FD2023323575F3B00B3C342 /* qr_scan_view_controller.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = qr_scan_view_controller.mm; sourceTree = "<group>"; };
 		0FD2023423575F3B00B3C342 /* qr_code.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = qr_code.mm; sourceTree = "<group>"; };
 		0FD2023523575F3B00B3C342 /* device_params_helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = device_params_helper.h; sourceTree = "<group>"; };
-		0FD2023623575F3B00B3C342 /* nsurl_connection_data_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nsurl_connection_data_handler.h; sourceTree = "<group>"; };
-		0FD2023723575F3B00B3C342 /* nsurl_connection_data_handler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = nsurl_connection_data_handler.mm; sourceTree = "<group>"; };
 		0FD2023823575F3B00B3C342 /* device_params_helper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = device_params_helper.mm; sourceTree = "<group>"; };
 		0FD2023923575F3B00B3C342 /* qr_scan_view_controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qr_scan_view_controller.h; sourceTree = "<group>"; };
 		0FD2023B23575F3B00B3C342 /* cardboard_v1.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cardboard_v1.cc; sourceTree = "<group>"; };
 		0FD2023C23575F3B00B3C342 /* cardboard_v1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cardboard_v1.h; sourceTree = "<group>"; };
 		0FD2023D23575F3B00B3C342 /* distortion_mesh.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = distortion_mesh.cc; sourceTree = "<group>"; };
 		0FD2025E2357613600B3C342 /* cardboard_device.pb.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = cardboard_device.pb.cc; path = ../proto/cardboard_device.pb.cc; sourceTree = "<group>"; };
-		0FD20260235761ED00B3C342 /* libprotobuf-lite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libprotobuf-lite.a"; path = "../third_party/libprotobuf/universal/libprotobuf-lite.a"; sourceTree = "<group>"; };
 		0FD202B92357C0F200B3C342 /* sdk.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = sdk.bundle; path = qrcode/ios/sdk.bundle; sourceTree = "<group>"; };
 		0FECE29725BB2760009C662C /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
 		0FECE29925BB276D009C662C /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/iOSSupport/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
-		0FF99B2524587233001FF78F /* cardboard_xr_unity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cardboard_xr_unity.h; sourceTree = "<group>"; };
-		0FF99B2624587233001FF78F /* cardboard_xr_unity.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cardboard_xr_unity.cc; sourceTree = "<group>"; };
+		0FEDA004283670070023E8C8 /* nsurl_session_data_handler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = nsurl_session_data_handler.mm; sourceTree = "<group>"; };
+		0FEDA005283670070023E8C8 /* nsurl_session_data_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nsurl_session_data_handler.h; sourceTree = "<group>"; };
 		7B2ADAC924E4779500FEBAA8 /* opengl_es2_distortion_renderer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opengl_es2_distortion_renderer.cc; sourceTree = "<group>"; };
 		7B76813424A3FA6B00E92050 /* input.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = input.cc; sourceTree = "<group>"; };
 		7B76813524A3FA6B00E92050 /* display.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = display.cc; sourceTree = "<group>"; };
@@ -174,6 +168,10 @@
 		7B76815224A3FA8100E92050 /* IUnityXRInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IUnityXRInput.h; sourceTree = "<group>"; };
 		7B76815324A3FA8100E92050 /* IUnityGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IUnityGraphics.h; sourceTree = "<group>"; };
 		7B76815424A3FA8100E92050 /* IUnityGraphicsD3D9.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IUnityGraphicsD3D9.h; sourceTree = "<group>"; };
+		E01C984026B44A71001BB0E3 /* cardboard_display_api.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cardboard_display_api.cc; sourceTree = "<group>"; };
+		E01C984126B44A71001BB0E3 /* cardboard_display_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cardboard_display_api.h; sourceTree = "<group>"; };
+		E0DFCFEB26B3474400F285A5 /* cardboard_input_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cardboard_input_api.h; sourceTree = "<group>"; };
+		E0DFCFEC26B3474400F285A5 /* cardboard_input_api.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cardboard_input_api.cc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,7 +179,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0F8D4FDF2361F86A00E7C48D /* libprotobuf-lite.a in Frameworks */,
 				0FECE29825BB2760009C662C /* Metal.framework in Frameworks */,
 				0FECE29A25BB276D009C662C /* MetalKit.framework in Frameworks */,
 			);
@@ -230,7 +227,7 @@
 		0FD200862357511E00B3C342 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0FD200852357511E00B3C342 /* cardboard_api.a */,
+				0FD200852357511E00B3C342 /* GfxPluginCardboard.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -240,8 +237,6 @@
 			children = (
 				0FECE29925BB276D009C662C /* MetalKit.framework */,
 				0FECE29725BB2760009C662C /* Metal.framework */,
-				0F8D4FDE2361F86A00E7C48D /* libprotobuf-lite.a */,
-				0FD20260235761ED00B3C342 /* libprotobuf-lite.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -342,11 +337,11 @@
 		0FD2023223575F3B00B3C342 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				0FEDA005283670070023E8C8 /* nsurl_session_data_handler.h */,
+				0FEDA004283670070023E8C8 /* nsurl_session_data_handler.mm */,
 				0FD2023323575F3B00B3C342 /* qr_scan_view_controller.mm */,
 				0FD2023423575F3B00B3C342 /* qr_code.mm */,
 				0FD2023523575F3B00B3C342 /* device_params_helper.h */,
-				0FD2023623575F3B00B3C342 /* nsurl_connection_data_handler.h */,
-				0FD2023723575F3B00B3C342 /* nsurl_connection_data_handler.mm */,
 				0FD2023823575F3B00B3C342 /* device_params_helper.mm */,
 				0FD2023923575F3B00B3C342 /* qr_scan_view_controller.h */,
 			);
@@ -374,11 +369,13 @@
 		0FF99B2424587233001FF78F /* xr_unity_plugin */ = {
 			isa = PBXGroup;
 			children = (
+				E01C984026B44A71001BB0E3 /* cardboard_display_api.cc */,
+				E01C984126B44A71001BB0E3 /* cardboard_display_api.h */,
+				E0DFCFEC26B3474400F285A5 /* cardboard_input_api.cc */,
+				E0DFCFEB26B3474400F285A5 /* cardboard_input_api.h */,
 				0F6BA71D25CC53E100C1B015 /* opengl_es2_renderer.cc */,
 				0F6BA71E25CC53E100C1B015 /* opengl_es3_renderer.cc */,
 				0F6BA71C25CC53E100C1B015 /* renderer.h */,
-				0FF99B2524587233001FF78F /* cardboard_xr_unity.h */,
-				0FF99B2624587233001FF78F /* cardboard_xr_unity.cc */,
 				0F6BA72325CC5B7D00C1B015 /* metal_renderer.mm */,
 			);
 			path = xr_unity_plugin;
@@ -455,7 +452,7 @@
 			);
 			name = sdk;
 			productName = sdk;
-			productReference = 0FD200852357511E00B3C342 /* cardboard_api.a */;
+			productReference = 0FD200852357511E00B3C342 /* GfxPluginCardboard.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -502,10 +499,10 @@
 				0FD2024D23575F3B00B3C342 /* sensor_event_producer.mm in Sources */,
 				0F29AA62255AC3A200154BD0 /* is_initialized.cc in Sources */,
 				0FD2025023575F3B00B3C342 /* mean_filter.cc in Sources */,
-				0FD2025623575F3B00B3C342 /* nsurl_connection_data_handler.mm in Sources */,
 				0FD2024F23575F3B00B3C342 /* gyroscope_bias_estimator.cc in Sources */,
 				0FD2023E23575F3B00B3C342 /* screen_params.mm in Sources */,
 				0FD2024B23575F3B00B3C342 /* device_gyroscope_sensor.mm in Sources */,
+				E0DFCFED26B3474400F285A5 /* cardboard_input_api.cc in Sources */,
 				0FD2024223575F3B00B3C342 /* matrixutils.cc in Sources */,
 				0FD2025F2357613600B3C342 /* cardboard_device.pb.cc in Sources */,
 				0FD2024723575F3B00B3C342 /* median_filter.cc in Sources */,
@@ -515,7 +512,6 @@
 				0FD2025423575F3B00B3C342 /* qr_scan_view_controller.mm in Sources */,
 				0FD2025123575F3B00B3C342 /* cardboard.cc in Sources */,
 				0F6BA72425CC5B7D00C1B015 /* metal_renderer.mm in Sources */,
-				0FF99B2724587233001FF78F /* cardboard_xr_unity.cc in Sources */,
 				7B76813A24A3FA6B00E92050 /* input.cc in Sources */,
 				7B76813B24A3FA6B00E92050 /* display.cc in Sources */,
 				0F984F7A25C047860033D5C6 /* metal_distortion_renderer.mm in Sources */,
@@ -529,7 +525,9 @@
 				0FD2024E23575F3B00B3C342 /* sensor_helper.mm in Sources */,
 				0F6BA71F25CC53E100C1B015 /* opengl_es2_renderer.cc in Sources */,
 				0FD2024A23575F3B00B3C342 /* sensor_fusion_ekf.cc in Sources */,
+				0FEDA006283670070023E8C8 /* nsurl_session_data_handler.mm in Sources */,
 				0FD2024323575F3B00B3C342 /* matrix_3x3.cc in Sources */,
+				E01C984226B44A72001BB0E3 /* cardboard_display_api.cc in Sources */,
 				0FD2024423575F3B00B3C342 /* lens_distortion.cc in Sources */,
 				0FD2025523575F3B00B3C342 /* qr_code.mm in Sources */,
 				0FD2023F23575F3B00B3C342 /* rotation.cc in Sources */,
@@ -677,12 +675,15 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)",
 					"$(PROJECT_DIR)/../proto",
-					"$(PROJECT_DIR)/../third_party/libprotobuf/ios/include",
 					"$(PROJECT_DIR)/../third_party/unity_plugin_api",
+					"$(inherited)",
 				);
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../third_party/libprotobuf/ios/lib";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = cardboard_api;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = GfxPluginCardboard;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -696,16 +697,22 @@
 				DEVELOPMENT_TEAM = C5M9TX4B3U;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = NO;
 				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = GLES_SILENCE_DEPRECATION;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					GLES_SILENCE_DEPRECATION,
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)",
 					"$(PROJECT_DIR)/../proto",
-					"$(PROJECT_DIR)/../third_party/libprotobuf/ios/include",
 					"$(PROJECT_DIR)/../third_party/unity_plugin_api",
+					"$(inherited)",
 				);
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../third_party/libprotobuf/ios/lib";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = cardboard_api;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = GfxPluginCardboard;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

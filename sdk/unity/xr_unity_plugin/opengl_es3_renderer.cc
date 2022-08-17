@@ -226,12 +226,22 @@ class OpenGlEs3Renderer : public Renderer {
       CardboardDistortionRenderer* renderer, const ScreenParams& screen_params,
       const CardboardEyeTextureDescription* left_eye,
       const CardboardEyeTextureDescription* right_eye) override {
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     int bound_framebuffer = 0;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &bound_framebuffer);
     CardboardDistortionRenderer_renderEyeToDisplay(
         renderer, bound_framebuffer, screen_params.viewport_x,
         screen_params.viewport_y, screen_params.viewport_width,
         screen_params.viewport_height, left_eye, right_eye);
+  }
+
+  void RunRenderingPreProcessing(
+      const ScreenParams& /* screen_params */) override {
+    // Nothing to do.
+  }
+
+  void RunRenderingPostProcessing() override {
+    // Nothing to do.
   }
 
  private:
