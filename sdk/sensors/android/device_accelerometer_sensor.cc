@@ -22,6 +22,7 @@
 #include <memory>
 #include <mutex>  // NOLINT
 
+#include "util/constants.h"
 #include "util/logging.h"
 
 // Workaround to avoid the inclusion of "android_native_app_glue.h.
@@ -55,7 +56,7 @@ const ASensor* InitSensor(ASensorManager* sensor_manager) {
 
 bool PollLooper(int timeout_ms, int* num_events) {
   void* source = nullptr;
-  const int looper_id = ALooper_pollAll(timeout_ms, NULL, num_events,
+  const int looper_id = ALooper_pollOnce(timeout_ms, NULL, num_events,
                                         reinterpret_cast<void**>(&source));
   if (looper_id != LOOPER_ID_USER) {
     return false;
@@ -128,7 +129,13 @@ struct DeviceAccelerometerSensor::SensorInfo {
 
 DeviceAccelerometerSensor::DeviceAccelerometerSensor()
     : sensor_info_(new SensorInfo()) {
+#if __ANDROID_MIN_SDK_VERSION__ >= 26
+  sensor_info_->sensor_manager =
+      ASensorManager_getInstanceForPackage(Constants::kCardboardSdkPackageName);
+#else
+  // TODO: b/314792983 - Remove deprecated NDK methods.
   sensor_info_->sensor_manager = ASensorManager_getInstance();
+#endif
   sensor_info_->sensor = InitSensor(sensor_info_->sensor_manager);
   if (!sensor_info_->sensor) {
     return;

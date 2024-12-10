@@ -66,6 +66,15 @@ typedef enum CardboardViewportOrientation {
   kPortraitUpsideDown = 3,
 } CardboardViewportOrientation;
 
+/// Enum with the supported OpenGL ES textures to be used for the eyes
+/// rendering.
+typedef enum CardboardSupportedOpenGlEsTextureType {
+  /// Maps to GL_TEXTURE_2D.
+  kGlTexture2D = 0,
+  /// Maps to GL_TEXTURE_EXTERNAL_OES (only supported on Android).
+  kGlTextureExternalOes = 1,
+} CardboardSupportedOpenGlEsTextureType;
+
 /// Struct representing a 3D mesh with 3D vertices and corresponding UV
 /// coordinates.
 typedef struct CardboardMesh {
@@ -127,6 +136,12 @@ typedef struct CardboardEyeTextureDescription {
   /// v coordinate of the bottom side of the eye.
   float bottom_v;
 } CardboardEyeTextureDescription;
+
+/// Struct to set OpenGL ES distortion renderer configuration.
+typedef struct CardboardOpenGlEsDistortionRendererConfig {
+  /// Texture type.
+  CardboardSupportedOpenGlEsTextureType texture_type;
+} CardboardOpenGlEsDistortionRendererConfig;
 
 /// Struct to set Metal distortion renderer configuration.
 typedef struct CardboardMetalDistortionRendererConfig {
@@ -425,14 +440,18 @@ CardboardUv CardboardLensDistortion_distortedUvForUndistortedUv(
 /// Creates a new distortion renderer object. It uses OpenGL ES 2.0 as the
 /// rendering API. Must be called from the render thread.
 ///
+/// @param[in]      config                  Distortion renderer configuration.
 /// @return         Distortion renderer object pointer
-CardboardDistortionRenderer* CardboardOpenGlEs2DistortionRenderer_create();
+CardboardDistortionRenderer* CardboardOpenGlEs2DistortionRenderer_create(
+    const CardboardOpenGlEsDistortionRendererConfig* config);
 
 /// Creates a new distortion renderer object. It uses OpenGL ES 3.0 as the
 /// rendering API. Must be called from the render thread.
 ///
+/// @param[in]      config                  Distortion renderer configuration.
 /// @return         Distortion renderer object pointer
-CardboardDistortionRenderer* CardboardOpenGlEs3DistortionRenderer_create();
+CardboardDistortionRenderer* CardboardOpenGlEs3DistortionRenderer_create(
+    const CardboardOpenGlEsDistortionRendererConfig* config);
 
 /// Creates a new distortion renderer object. It uses Metal as the rendering
 /// API. Must be called from the render thread.
@@ -609,6 +628,18 @@ void CardboardHeadTracker_getPose(
 ///
 /// @param[in]      head_tracker            Head tracker object pointer.
 void CardboardHeadTracker_recenter(CardboardHeadTracker* head_tracker);
+
+/// Sets a low pass filter on the head tracker with the given cut-off frequency
+/// to filter out high-frequency noise that is not representative of head
+/// movements.
+/// Using the low-pass filter is optional, but it will provide a more stable
+/// pose prediction.
+
+/// @param[in]      head_tracker      Head tracker object pointer
+/// @param[in]      cutoff_frequency  Cutoff frequency for the low-pass filter
+/// of the head tracker.
+void CardboardHeadTracker_setLowPassFilter(CardboardHeadTracker* head_tracker,
+                                           int cutoff_frequency);
 
 /// @}
 
