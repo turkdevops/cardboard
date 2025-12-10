@@ -1,9 +1,9 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 35
+    compileSdk = 35
     lintOptions {
-        abortOnError false
+        abortOnError = false
     }
     defaultConfig {
         applicationId "com.google.cardboard.hellocardboard"
@@ -15,10 +15,10 @@ android {
         // Vulkan        - Requires 24 or higher
         //
         // See the release notes for details.
-        minSdkVersion 26
-        targetSdkVersion 35
+        minSdkVersion = 26
+        targetSdkVersion = 35
         versionCode 1
-        versionName "1.31.0"
+        versionName "1.32.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a'
@@ -36,7 +36,7 @@ android {
     externalNativeBuild.cmake {
         path "CMakeLists.txt"
     }
-    namespace 'com.google.cardboard'
+    namespace = 'com.google.cardboard'
 }
 
 dependencies {

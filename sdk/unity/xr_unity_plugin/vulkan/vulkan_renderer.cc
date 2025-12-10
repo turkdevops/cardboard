@@ -303,6 +303,7 @@ class VulkanRenderer : public Renderer {
     const VkRenderPassCreateInfo render_pass_create_info{
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
         .pNext = nullptr,
+        .flags = 0,
         .attachmentCount = 1,
         .pAttachments = &attachment_descriptions,
         .subpassCount = 1,
