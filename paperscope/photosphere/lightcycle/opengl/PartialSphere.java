@@ -243,7 +243,7 @@ public class PartialSphere extends DrawableGL {
       for (int x = 0, u = 0; u < textureCountX; x += tesselationFactor, ++u) {
         curvedTiles[u][v] =
             new CurvedTile(v + (u * textureCountY), tesselationFactor);
-        List<Vertex> vertexList = new ArrayList<Vertex>();
+        List<Vertex> vertexList = new ArrayList<>();
 
         // For each texture, add the relevant vertices.
         // TODO(haeberling): We should store vertices in a single buffer for

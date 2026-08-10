@@ -91,7 +91,7 @@ public class VideoFetcher {
     int idColumn = videoCursor.getColumnIndex(MediaStore.Video.Media._ID);
     int dataColumn = videoCursor.getColumnIndex(MediaStore.Video.Media.DATA);
 
-    List<VideoInfo> videoInfoList = new ArrayList<VideoInfo>();
+    List<VideoInfo> videoInfoList = new ArrayList<>();
     while (videoCursor.moveToNext()) {
       Uri contentUri = Uri.parse(
           android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI

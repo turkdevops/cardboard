@@ -25,6 +25,7 @@
 #include <random>
 #include <sstream>
 #include <string>
+#include <assert.h>
 
 #include "HelloCardboardFileUtils.h"
 

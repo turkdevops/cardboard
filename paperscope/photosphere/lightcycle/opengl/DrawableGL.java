@@ -31,7 +31,7 @@ public abstract class DrawableGL {
   protected ShortBuffer mIndices = null;
 
   /** Storage for textures. */
-  protected Vector<TextureProvider> mTextures = new Vector<TextureProvider>();
+  protected Vector<TextureProvider> mTextures = new Vector<>();
 
   /** Transformation. */
   protected float[] mLocalMatrix = new float[16];
@@ -115,7 +115,7 @@ public abstract class DrawableGL {
   // Add a child of the drawable.
   public void addChild(DrawableGL child) {
     if (mChildren == null) {
-      mChildren = new HashSet<DrawableGL>();
+      mChildren = new HashSet<>();
     }
     mChildren.add(child);
   }

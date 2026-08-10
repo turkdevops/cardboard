@@ -30,7 +30,7 @@ final class SupportedAppProvider {
   private List<BasicAppInfo> installedApps;
 
   private SupportedAppProvider() {
-    installedApps = new ArrayList<BasicAppInfo>();
+    installedApps = new ArrayList<>();
   }
 
   public static SupportedAppProvider getInstance() {
@@ -141,11 +141,11 @@ final class SupportedAppProvider {
 
   private List<BasicAppInfo> getSupportedAppList(PackageManager packageManager, Context context) {
     // Map of package name and basicAppInfo that will be used to ensure uniqueness.
-    Map<String, BasicAppInfo> supportedAppsMap = new LinkedHashMap<String, BasicAppInfo>();
+    Map<String, BasicAppInfo> supportedAppsMap = new LinkedHashMap<>();
     // Add apps that have cardboard intent.
     appendInstalledAppsWithCardboardSupportIntent(packageManager, context, supportedAppsMap);
 
-    List<BasicAppInfo> supportedApps = new ArrayList<BasicAppInfo>(supportedAppsMap.values());
+    List<BasicAppInfo> supportedApps = new ArrayList<>(supportedAppsMap.values());
     sortAppListByName(supportedApps);
     return supportedApps;
   }

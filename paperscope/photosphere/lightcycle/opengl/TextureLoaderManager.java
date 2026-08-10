@@ -21,7 +21,7 @@ public class TextureLoaderManager {
   private Semaphore bitmapLoadingSemaphore;
 
   private final TileProvider tileProvider;
-  private final List<DelayedTextureLoader> loaders = new ArrayList<DelayedTextureLoader>();
+  private final List<DelayedTextureLoader> loaders = new ArrayList<>();
 
   /**
    * This instance is given to all texture loaders. It's called when any of them loaded a texture

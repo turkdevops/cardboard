@@ -53,8 +53,10 @@ IosScreenParamsMap loadIosScreenParamsFromFile(std::string_view filePath) {
   }
 
   std::string line;
-  std::getline(screenParamsFile, line);  // Skip the header
   while (std::getline(screenParamsFile, line)) {
+    if (line.starts_with('#') || line.starts_with("identifier,") || line.empty()) {
+      continue;
+    }
     const std::array<std::string, 3> tokens {stringSplit(line, ',')};
     screenParams[tokens.at(0)] = {tokens.at(1), strtod(tokens.at(2).c_str(), nullptr)};
   }
@@ -63,28 +65,44 @@ IosScreenParamsMap loadIosScreenParamsFromFile(std::string_view filePath) {
 }
 
 CGFloat getDpi() {
-  // Gets model name.
-  struct utsname systemInfo;
-  uname(&systemInfo);
+  @autoreleasepool {
+    // Gets model name.
+    struct utsname systemInfo;
+    if (uname(&systemInfo) < 0) {
+      CARDBOARD_LOGE("uname failed.");
+      return kDefaultDpi;
+    }
 
-  NSString *machineName = [NSString stringWithCString:systemInfo.machine
-                                             encoding:NSUTF8StringEncoding];
-  machineName = [machineName stringByReplacingOccurrencesOfString:@"," withString:@"."];
-  const std::string modelName{[machineName UTF8String]};
+    NSString *machineName = [NSString stringWithCString:systemInfo.machine
+                                               encoding:NSUTF8StringEncoding];
+    if (!machineName) {
+      CARDBOARD_LOGE("Couldn't get machine name.");
+      return kDefaultDpi;
+    }
 
-  CARDBOARD_LOGI("Model name: %s", modelName.c_str());
+    machineName = [machineName stringByReplacingOccurrencesOfString:@"," withString:@"."];
+    const std::string modelName{[machineName UTF8String]};
 
-  const SDKBundleFinder *bundleFinder = [[SDKBundleFinder alloc] init];
-  const NSBundle *sdkBundle = [bundleFinder getSDKBundle];
-  const NSString *screenParamsFilePath = [sdkBundle pathForResource:@"resolutions" ofType:@"csv"];
-  const IosScreenParamsMap screenParams{loadIosScreenParamsFromFile([screenParamsFilePath UTF8String])};
+    CARDBOARD_LOGI("Model name: %s", modelName.c_str());
 
-  if (screenParams.find(modelName) == screenParams.end()) {
-    CARDBOARD_LOGE("Couldn't find screen params for model: %s", modelName.c_str());
-    return kDefaultDpi;
+    const SDKBundleFinder *bundleFinder = [[SDKBundleFinder alloc] init];
+    const NSBundle *sdkBundle = [bundleFinder getSDKBundle];
+    const NSString *screenParamsFilePath = [sdkBundle pathForResource:@"resolutions" ofType:@"csv"];
+    if (!screenParamsFilePath) {
+      CARDBOARD_LOGE("Couldn't find screen params file.");
+      return kDefaultDpi;
+    }
+
+    const IosScreenParamsMap screenParams{
+        loadIosScreenParamsFromFile([screenParamsFilePath UTF8String])};
+    const auto it = screenParams.find(modelName);
+    if (it == screenParams.end()) {
+      CARDBOARD_LOGE("Couldn't find screen params for model: %s", modelName.c_str());
+      return kDefaultDpi;
+    }
+
+    return it->second.second;
   }
-
-  return screenParams.at(modelName).second;
 }
 
 void getScreenSizeInMeters(int width_pixels, int height_pixels, float *out_width_meters,
